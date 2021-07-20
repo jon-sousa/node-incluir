@@ -1,0 +1,11 @@
+<%- include('./partials/beginOfPage') -%>
+
+<h1><%= title %></h1>
+<% for(let empresa of empresas){ %>
+    <div class="container pointer" id= <%= empresa._id %> data-click=false onclick="expandir(this)">
+        <h3><%= empresa.nome %></h3>
+        <h4><%= empresa.cnpj %></h4>
+    </div>
+<% } %>
+
+<%- include('./partials/endOfPage') -%>

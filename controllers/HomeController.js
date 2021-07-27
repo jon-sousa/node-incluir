@@ -10,6 +10,8 @@ module.exports = {
             if(usuarioLogado){
                 req.session.usuarioLogado = usuarioLogado
             }
+
+            req.session.data = {}
             
             res.render('home', {title: 'Home', empresas: empresas})
         }

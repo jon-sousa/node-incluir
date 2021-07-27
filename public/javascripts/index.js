@@ -48,12 +48,15 @@ function expandir(tagEmpresa){
                 <p>${avaliacaoRecebida.possuiMetodologiaAdequada}</p>
             </div>
         </div>
-        <div data-type="comentarios">
-            <div class="" onclick="comentarios(this)">Comentários</div>
-        </div>
-        <div class="input-group mb-3">
-            <input type="text" class="form-control" placeholder="" aria-label="Recipient's username" aria-describedby="button-addon2">
-            <button class="btn btn-outline-secondary" type="button" id="" onclick="comentar(this)" data-empresa = ${tagEmpresa.id}>Button</button>
+        <div>
+            <div data-type="comentarios">
+                <h3 class="pointer" onclick="comentarios(this)" data-empresa = ${tagEmpresa.id}>Comentários</h3>
+                <div id="comentarios"></div>
+            </div>
+            <div class="hidden">
+                <input type="text" class="form-control" placeholder="" aria-label="Recipient's username" aria-describedby="button-addon2">
+                <button class="btn btn-outline-secondary" type="button" id="" onclick="comentar(this)" data-empresa = ${tagEmpresa.id}> Inserir </button>
+            </div>
         </div>
         `
 
@@ -67,9 +70,10 @@ function comentar(tagName){
     let empresaId = tagName.dataset.empresa
     let body = {
         comentario: comentario, 
-        empresaId: empresaId
+        empresaId: empresaId,
+        data: new Date()
     }
-
+    console.log(JSON.stringify(body))
     fetch('/comentario/inserir', {
         headers: new Headers({'Content-Type': 'application/json'}),
         method: 'POST',
@@ -86,13 +90,61 @@ function comentar(tagName){
         console.log(`Response: ${response}`)
         if(response){
             response = JSON.parse(response)
-            let comentarios = tagName.parentNode.previousElementSibling
-            comentarios.innerHTML += `<div><strong>${response.nome}</strong>: ${response.conteudo}</div>`
+            let comentarios = tagName.parentNode.previousElementSibling.lastElementChild
+            comentarios.innerHTML += 
+                                `<div id=${response._id}>
+                                    <p><strong>${response.nome_usuario}</strong>: ${response.conteudo}</p>
+                                    <button class='btn btn-warning' onclick='excluirComentario(this)'>Excluir</button>
+                                </div>`
         }
     })
     .catch(erro => console.log(`Ocorreu um erro ao inserir comentário: ${erro}`))
 }
 
 function comentarios(tagComentario){
-    
+    let empresa = tagComentario.dataset.empresa
+
+    fetch(`/comentario/consultar/${empresa}`)
+        .then(response => response.json())
+        .then(response => {
+            let comentarios = JSON.parse(response)
+            let comentariosInseridos =comentarios.reduce(
+                (acumulador, comentario) => 
+                    acumulador += 
+                        `<div id=${comentario._id}>
+                            <p><strong>${comentario.nome_usuario}</strong>: ${comentario.conteudo}</p>
+                            <button class='btn btn-warning' onclick='excluirComentario(this)'>Excluir</button>
+                        </div>`,
+                    ''
+                )
+            
+            console.log('tag atual: ')
+            console.log(tagComentario)
+
+            console.log('tag pai: ')
+            console.log(tagComentario.parentNode)
+
+            console.log('tag tia: ')
+            console.log(tagComentario.parentNode.nextElementSibling)
+
+            console.log('tag irma: ')
+            console.log(tagComentario.nextElementSibling)
+
+            let tagComentar = tagComentario.parentNode.nextElementSibling
+            tagComentar.className = 'input-group mb-3'
+            tagComentario.innerHTML = 'Comentários mais antigos'
+            tagComentario.nextElementSibling.innerHTML += comentariosInseridos
+        })
+        .catch(error => console.log(`Erro ao consultar comentários: ${error}`))
+}
+
+function excluirComentario(tagName){
+    let comentario = tagName.parentNode
+    fetch(`/comentario/excluir/${comentario.id}`, {method: 'DELETE'})
+    .then(result => {
+        if(result.ok){
+            comentario.remove()
+        }
+    })
+    .catch(err => console.log(`Erro> ${err}`))
 }

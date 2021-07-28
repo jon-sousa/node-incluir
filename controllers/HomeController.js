@@ -13,7 +13,7 @@ module.exports = {
 
             req.session.data = {}
             
-            res.render('home', {title: 'Home', empresas: empresas})
+            res.render('home', {title: 'Empresas Inclusivas', empresas: empresas})
         }
         catch(e){
             res.status(500).send('Algo deu errado: ' + e)

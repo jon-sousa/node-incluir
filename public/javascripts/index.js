@@ -21,55 +21,55 @@ function expandir(tagEmpresa){
         return response.json()
     })
     .then(avaliacaoRecebida => {
-        
-        tagEmpresa.innerHTML += `<div>
-            <div>
-                <p>Quantidade de votos</p>
-                <p>${avaliacaoRecebida.quantidade}</p>
+        console.log(tagEmpresa)
+        tagEmpresa.getElementsByClassName('card-body')[0].innerHTML += 
+            `<ul class="group-list">
+                <li class="list-group-item d-flex justify-content-start">
+                    <p class="me-3">Quantidade de votos:</p>
+                    <p><strong>${avaliacaoRecebida.quantidade}</strong></p>
+                </li">
+                <li class="list-group-item d-flex justify-content-start">
+                    <p class="me-3">Rampa de acesso?</p>
+                    <p><strong>${avaliacaoRecebida.rampaAcesso}</strong></p>
+                </li>
+                <li class="list-group-item d-flex justify-content-start">
+                    <p class="me-3">Placas em braille?</p>
+                    <p><strong>${avaliacaoRecebida.placasBraille}</strong></p>
+                </li>
+                <li class="list-group-item d-flex justify-content-start">
+                    <p class="me-3">Possui equipe técnica?</p>
+                    <p><strong>${avaliacaoRecebida.possuiEquipeTecnica}</strong></p>
+                </li>
+                <li class="list-group-item d-flex justify-content-start">
+                    <p class="me-3">Equipe técnica competente?</p>
+                    <p><strong>${avaliacaoRecebida.competenciaEquipeTecnica}</strong></p>
+                </li>
+                <li class="list-group-item d-flex justify-content-start">
+                    <p class="me-3">Possui metodologia adequada?</p>
+                    <p><strong>${avaliacaoRecebida.possuiMetodologiaAdequada}</strong></p>
+                </li>
+            </ul>
+            <div class="">
+                <div data-type="comentarios">
+                    <h7 class="btn btn-info center-block pointer" onclick="comentarios(this)" data-empresa = ${tagEmpresa.id}>Comentários</h7>
+                    <div id="comentarios"></div>
+                </div>
+                <div class="hidden">
+                    <input type="text" class="form-control" placeholder="" aria-label="Recipient's username" aria-describedby="button-addon2">
+                    <button class="btn btn-outline-secondary" type="button" id="" onclick="comentar(this)" data-empresa = ${tagEmpresa.id}> Inserir </button>
+                </div>
             </div>
-            <div>
-                <p>Rampa de acesso</p>
-                <p>${avaliacaoRecebida.rampaAcesso}</p>
-            </div>
-            <div>
-                <p>Placas em braille</p>
-                <p>${avaliacaoRecebida.placasBraille}</p>
-            </div>
-            <div>
-                <p>Possui equipe técnica?</p>
-                <p>${avaliacaoRecebida.possuiEquipeTecnica}</p>
-            </div>
-            <div>
-                <p>Competência da equipe técnica</p>
-                <p>${avaliacaoRecebida.competenciaEquipeTecnica}</p>
-            </div>
-            <div>
-                <p>Possui metodologia adequada?</p>
-                <p>${avaliacaoRecebida.possuiMetodologiaAdequada}</p>
-            </div>
-        </div>
-        <div>
-            <div data-type="comentarios">
-                <h3 class="pointer" onclick="comentarios(this)" data-empresa = ${tagEmpresa.id}>Comentários</h3>
-                <div id="comentarios"></div>
-            </div>
-            <div class="hidden">
-                <input type="text" class="form-control" placeholder="" aria-label="Recipient's username" aria-describedby="button-addon2">
-                <button class="btn btn-outline-secondary" type="button" id="" onclick="comentar(this)" data-empresa = ${tagEmpresa.id}> Inserir </button>
-            </div>
-        </div>
-        `
+            `
 
         tagEmpresa.dataset.click = true
-        tagEmpresa.className = 'container'
     })
 }
 
 function comentar(tagName){
-    let comentario = tagName.previousElementSibling.value
+    let comentario = tagName.previousElementSibling
     let empresaId = tagName.dataset.empresa
     let body = {
-        comentario: comentario, 
+        comentario: comentario.value, 
         empresaId: empresaId,
         data: new Date()
     }
@@ -97,6 +97,8 @@ function comentar(tagName){
                                     <button class='btn btn-warning' onclick='excluirComentario(this)'>Excluir</button>
                                 </div>`
         }
+
+        comentario.value = ''
     })
     .catch(erro => console.log(`Ocorreu um erro ao inserir comentário: ${erro}`))
 }
@@ -111,9 +113,9 @@ function comentarios(tagComentario){
             let comentariosInseridos =comentarios.reduce(
                 (acumulador, comentario) => 
                     acumulador += 
-                        `<div id=${comentario._id}>
+                        `<div class="d-flex justify-content-between mb-1" id=${comentario._id}>
                             <p><strong>${comentario.nome_usuario}</strong>: ${comentario.conteudo}</p>
-                            <button class='btn btn-warning' onclick='excluirComentario(this)'>Excluir</button>
+                            <button class='btn btn-warning btn-sm' onclick='excluirComentario(this)'>Excluir</button>
                         </div>`,
                     ''
                 )

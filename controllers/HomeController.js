@@ -23,12 +23,22 @@ module.exports = {
     async buscarAvaliacaoEmpresa(req, res){
         
         try{
+            let usuario = req.session.usuarioLogado
+            let habilitarVotacao = false
+
             let id = req.body.id;
             let avaliacaoDaEmpresa = await avaliacao.buscar(id);
-
-            if(!avaliacaoDaEmpresa){
-                return res.status(204).send('Não encontrado')
+            
+            if(!avaliacaoDaEmpresa) return res.status(204).send('Não encontrado')
+            
+            if(usuario){
+                if(usuario.votouEm.indexOf(id) === -1){
+                    habilitarVotacao = true
+                } 
             }
+    
+            avaliacaoDaEmpresa.habilitarVotacao = habilitarVotacao
+            avaliacaoDaEmpresa._id = id
 
             return res.status(200).json(avaliacaoDaEmpresa)
         }

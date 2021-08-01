@@ -21,11 +21,6 @@ function expandir(tagEmpresa){
         return response.json()
     })
     .then(avaliacaoRecebida => {
-        console.log(avaliacaoRecebida.habilitarVotacao)
-        console.log(typeof(avaliacaoRecebida.habilitarVotacao))
-        console.log('\n\n\n')
-        console.log(renderizarVotacao(avaliacaoRecebida))
-
         tagEmpresa.getElementsByClassName('card-body')[0].innerHTML += (renderizarVotacao(avaliacaoRecebida) + renderizarCorpoEmpresa(avaliacaoRecebida))
         
         tagEmpresa.dataset.click = true
@@ -45,37 +40,37 @@ function renderizarVotacao(avaliacaoRecebida){
             <div id="votacao${avaliacaoRecebida._id}" class="accordion-collapse collapse" aria-labelledby="heading${avaliacaoRecebida._id}" data-bs-parent="#accordion${avaliacaoRecebida._id}">
             <div class="accordion-body">
                 
-            <div class="form-check">
-                <label class="form-check-label" for="flexCheckDefault">
-                    Possui Rampa de acesso?
-                </label>
-                <input class="form-check-input" type="checkbox" value=""">
+                <div class="form-check">
+                    <label class="form-check-label" for="flexCheckDefault">
+                        Possui Rampa de acesso?
+                    </label>
+                    <input class="form-check-input" type="checkbox" data-referencia='rampaAcesso' value=""">
                 </div>
                 <div class="form-check">
-                <label class="form-check-label" for="flexCheckDefault">
-                    Possui placas em braille?
-                </label>
-                <input class="form-check-input" type="checkbox" value="">
+                    <label class="form-check-label" for="flexCheckDefault">
+                        Possui placas em braille?
+                    </label>
+                    <input class="form-check-input" type="checkbox" data-referencia='placasBraille' value="">
                 </div>
                 <div class="form-check">
-                <label class="form-check-label" for="flexCheckDefault">
-                    Possui equipe técnica?
-                </label>
-                <input class="form-check-input" type="checkbox" value="">
+                    <label class="form-check-label" for="flexCheckDefault">
+                        Possui equipe técnica?
+                    </label>
+                    <input class="form-check-input" type="checkbox" data-referencia='possuiEquipeTecnica' value="">
                 </div>
                 <div class="form-check">
-                <label class="form-check-label" for="flexCheckDefault">
-                    Equipe técnica é competente?
-                </label>
-                <input class="form-check-input" type="checkbox" value="">
+                    <label class="form-check-label" for="flexCheckDefault">
+                        Equipe técnica é competente?
+                    </label>
+                    <input class="form-check-input" type="checkbox" data-referencia='competenciaEquipeTecnica' value="">
                 </div>
                 <div class="form-check">
-                <label class="form-check-label" for="flexCheckDefault">
-                    Possui metodologia adequada?
-                </label>
-                <input class="form-check-input" type="checkbox" value="">
-            </div>
-            <button class="btn btn-success" onclick=comentar(votacao${avaliacaoRecebida._id})>Votar</button>
+                    <label class="form-check-label" for="flexCheckDefault">
+                        Possui metodologia adequada?
+                    </label>
+                    <input class="form-check-input" type="checkbox" data-referencia='possuiMetodologiaAdequada' value="">
+                </div>
+                <button class="btn btn-success" onclick="votar(this.parentNode, '${avaliacaoRecebida._id}')">Votar</button>
 
             </div>
             </div>
@@ -87,32 +82,7 @@ function renderizarVotacao(avaliacaoRecebida){
 }
 
 function renderizarCorpoEmpresa(avaliacaoRecebida){
-    return `<ul class="group-list">
-                <li class="list-group-item d-flex justify-content-start">
-                    <p class="me-3">Quantidade de votos:</p>
-                    <p><strong>${avaliacaoRecebida.quantidade}</strong></p>
-                </li">
-                <li class="list-group-item d-flex justify-content-start">
-                    <p class="me-3">Rampa de acesso?</p>
-                    <p><strong>${avaliacaoRecebida.rampaAcesso}</strong></p>
-                </li>
-                <li class="list-group-item d-flex justify-content-start">
-                    <p class="me-3">Placas em braille?</p>
-                    <p><strong>${avaliacaoRecebida.placasBraille}</strong></p>
-                </li>
-                <li class="list-group-item d-flex justify-content-start">
-                    <p class="me-3">Possui equipe técnica?</p>
-                    <p><strong>${avaliacaoRecebida.possuiEquipeTecnica}</strong></p>
-                </li>
-                <li class="list-group-item d-flex justify-content-start">
-                    <p class="me-3">Equipe técnica competente?</p>
-                    <p><strong>${avaliacaoRecebida.competenciaEquipeTecnica}</strong></p>
-                </li>
-                <li class="list-group-item d-flex justify-content-start">
-                    <p class="me-3">Possui metodologia adequada?</p>
-                    <p><strong>${avaliacaoRecebida.possuiMetodologiaAdequada}</strong></p>
-                </li>
-            </ul>
+    return `${renderizarAvaliacaoLista(avaliacaoRecebida)}
             <div class="">
                 <div data-type="comentarios">
                     <h7 class="btn btn-info center-block pointer" onclick="comentarios(this)" data-empresa = ${avaliacaoRecebida._id}>Comentários</h7>
@@ -124,6 +94,35 @@ function renderizarCorpoEmpresa(avaliacaoRecebida){
                 </div>
             </div>
             `
+}
+
+function renderizarAvaliacaoLista(avaliacaoRecebida){
+    return `<ul class="group-list">
+        <li class="list-group-item d-flex justify-content-start">
+            <p class="me-3">Quantidade de votos:</p>
+            <p><strong>${avaliacaoRecebida.quantidade}</strong></p>
+        </li">
+        <li class="list-group-item d-flex justify-content-start">
+            <p class="me-3">Rampa de acesso?</p>
+            <p><strong>${avaliacaoRecebida.rampaAcesso}</strong></p>
+        </li>
+        <li class="list-group-item d-flex justify-content-start">
+            <p class="me-3">Placas em braille?</p>
+            <p><strong>${avaliacaoRecebida.placasBraille}</strong></p>
+        </li>
+        <li class="list-group-item d-flex justify-content-start">
+            <p class="me-3">Possui equipe técnica?</p>
+            <p><strong>${avaliacaoRecebida.possuiEquipeTecnica}</strong></p>
+        </li>
+        <li class="list-group-item d-flex justify-content-start">
+            <p class="me-3">Equipe técnica competente?</p>
+            <p><strong>${avaliacaoRecebida.competenciaEquipeTecnica}</strong></p>
+        </li>
+        <li class="list-group-item d-flex justify-content-start">
+            <p class="me-3">Possui metodologia adequada?</p>
+            <p><strong>${avaliacaoRecebida.possuiMetodologiaAdequada}</strong></p>
+        </li>
+    </ul>`
 }
 
 function comentar(tagName){
@@ -210,4 +209,50 @@ function excluirComentario(tagName){
         }
     })
     .catch(err => console.log(`Erro> ${err}`))
+}
+
+function votar(tagName, id){
+    let itens = tagName.getElementsByTagName('input')
+    let voto = {}
+    voto.id = id
+
+    for(let i = 0; i < itens.length; i++){
+        let item = itens[i]
+        voto[item.dataset.referencia] = Number(item.checked)    
+    }
+
+    console.log(voto)
+    fetch('/votar-empresa',
+        {
+            headers: new Headers({'Content-Type': 'application/json'}),
+            method: 'POST',
+            body: JSON.stringify(voto)
+        }
+    )
+    .then(response =>{
+            if(response.ok){
+                return response.json()
+            }
+        })
+    .then(response => {
+        let flashMessage = document.createElement('div')
+        flashMessage.className = 'alert alert-success'
+        flashMessage.innerHTML = 'Voto incluído com sucesso'
+
+        let avaliacaoAtualizada = document.createElement('ul')
+        avaliacaoAtualizada.className = 'group-list'
+        avaliacaoAtualizada.innerHTML = renderizarAvaliacaoLista(response)
+
+        let votacaoDiv = tagName.parentNode.parentNode.parentNode
+        console.log(votacaoDiv)
+        console.log(votacaoDiv.parentNode)
+        console.log(avaliacaoAtualizada)
+        let body = votacaoDiv.parentNode
+        body.replaceChild(flashMessage, votacaoDiv)
+
+        let avaliacaoDiv = body.getElementsByTagName('ul')[0]
+        body.replaceChild(avaliacaoAtualizada, avaliacaoDiv)
+
+    })
+    .catch(err => console.log(`Erro ao incluir votação: ${err}`))
 }

@@ -5,7 +5,7 @@ module.exports = {
         try{
             let empresas = await empresa.find({})
 
-            let usuarioLogado = await usuario.findOne({email: 'jonas@jonas.com'})
+            let usuarioLogado = await usuario.findOne({email: 'mike@mike.com'})
             
             if(usuarioLogado){
                 req.session.usuarioLogado = usuarioLogado
@@ -46,5 +46,27 @@ module.exports = {
             res.status(500).send('Ocorreu um erro: ' + e)
         }
         
+    },
+
+    async votarEmpresa(req, res){
+        try{
+            let usuarioLogado = req.session.usuarioLogado
+
+            if(!usuarioLogado){
+                return res.status(203).send('Usuário não logado')
+            }
+
+            let votacaoRecebida = req.body
+            console.log(votacaoRecebida)
+            avaliacao.incluir(votacaoRecebida)
+            usuarioLogado.votouEm.push(votacaoRecebida.id)
+            console.log(JSON.stringify(usuarioLogado))
+            await usuario.updateOne({_id: usuarioLogado._id}, {$push: {votouEm: votacaoRecebida.id}})
+            let avaliacaoAtualizada = await avaliacao.buscar(votacaoRecebida.id)
+            res.status(200).json(avaliacaoAtualizada)
+        }
+        catch(err){
+            res.status(500).send('Erro: ' + err)
+        }
     }
 }

@@ -14,6 +14,10 @@ module.exports = {
             ['hincrby', avaliacao.id, 'quantidade', 1],
         ])
         .exec(function(err, replies){
+            if(err){
+                throw new Error(`Erro ao inserir votação no servidor: ${err}`);
+            }
+
             console.log(replies)
         })
     },

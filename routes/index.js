@@ -8,7 +8,6 @@ const app = require('../app');
 /* GET home page. */
 router.get('/incluir-avaliacao', async function(req, res, next) {
   let empresas = await empresa.find({})
-  console.log(JSON.stringify(empresas))
 
   avaliacao.incluir(
     {
@@ -93,7 +92,7 @@ router.get('/incluir-empresa', async function(req, res){
 
 router.get('/inserir-usuario', async function(req, res){
   try{
-    await usuario.create({nome: 'Jonas', email: 'jonas@jonas.com', votou: []})
+    await usuario.create({nome: 'Mike', email: 'mike@mike.com', votou: []})
     res.status(200).send('Tudo certo')
   }
   catch(e){
@@ -114,5 +113,7 @@ router.get('/consultar', function(req, res){
 
 router.get('/', homeController.get)
 router.post('/empresa-selecionada', homeController.buscarAvaliacaoEmpresa)
+router.post('/votar-empresa', homeController.votarEmpresa)
+
 
 module.exports = router;

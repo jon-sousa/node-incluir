@@ -29,7 +29,7 @@ module.exports = {
             let id = req.body.id;
             let avaliacaoDaEmpresa = await avaliacao.buscar(id);
             
-            if(!avaliacaoDaEmpresa) return res.status(204).send('Não encontrado')
+            if(!avaliacaoDaEmpresa) return res.status(200).json({_id: id, habilitarVotacao: true})
             
             if(usuario){
                 if(usuario.votouEm.indexOf(id) === -1){
@@ -57,10 +57,8 @@ module.exports = {
             }
 
             let votacaoRecebida = req.body
-            console.log(votacaoRecebida)
             avaliacao.incluir(votacaoRecebida)
             usuarioLogado.votouEm.push(votacaoRecebida.id)
-            console.log(JSON.stringify(usuarioLogado))
             await usuario.updateOne({_id: usuarioLogado._id}, {$push: {votouEm: votacaoRecebida.id}})
             let avaliacaoAtualizada = await avaliacao.buscar(votacaoRecebida.id)
             res.status(200).json(avaliacaoAtualizada)

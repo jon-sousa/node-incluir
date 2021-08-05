@@ -17,7 +17,6 @@ module.exports = {
             novoComentario.data = new Date(req.body.data)
     
             const comentarioInserido = await comentario.create(novoComentario)
-            console.log('Comentario inserido: ' + JSON.stringify(comentarioInserido))
             if(!comentarioInserido) return res.status(500).send('Erro ao inserir comentario')
 
             const comentarioAEnviar = {nome_usuario: comentarioInserido.nome_usuario, conteudo: comentarioInserido.conteudo}
@@ -41,8 +40,6 @@ module.exports = {
             }, '_id nome_usuario conteudo data')
             .sort({data: -1})
             .limit(5)
-
-            console.log(JSON.stringify(comentarios))
 
             if(comentarios.length)
                 req.session.data[empresaId] = comentarios[comentarios.length-1].data

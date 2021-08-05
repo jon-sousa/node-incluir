@@ -1,7 +1,5 @@
 
 function expandir(tagEmpresa){
-    console.log(`Tag id: ${tagEmpresa.id} clicou: ${tagEmpresa.dataset.click}`)
-
     if(tagEmpresa.dataset.click != 'false'){
         return
     }
@@ -30,7 +28,7 @@ function expandir(tagEmpresa){
 
 function renderizarVotacao(avaliacaoRecebida){
     if(avaliacaoRecebida.habilitarVotacao){
-        return `<div class="accordion" id="accordion${avaliacaoRecebida._id}">
+        return `<div class="accordion mt-3 mb-3" id="accordion${avaliacaoRecebida._id}">
             <div class="accordion-item">
             <h2 class="accordion-header" id="heading${avaliacaoRecebida._id}">
             <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#votacao${avaliacaoRecebida._id}" aria-expanded="true" aria-controls="votacao${avaliacaoRecebida._id}">
@@ -85,7 +83,7 @@ function renderizarCorpoEmpresa(avaliacaoRecebida){
     return `${renderizarAvaliacaoLista(avaliacaoRecebida)}
             <div class="">
                 <div data-type="comentarios">
-                    <h7 class="btn btn-info center-block pointer" onclick="comentarios(this)" data-empresa = ${avaliacaoRecebida._id}>Comentários</h7>
+                    <h7 class="btn btn-info w-100 mb-1 pointer" onclick="comentarios(this)" data-empresa = ${avaliacaoRecebida._id}>Comentários</h7>
                     <div id="comentarios"></div>
                 </div>
                 <div class="hidden">
@@ -133,7 +131,6 @@ function comentar(tagName){
         empresaId: empresaId,
         data: new Date()
     }
-    console.log(JSON.stringify(body))
     fetch('/comentario/inserir', {
         headers: new Headers({'Content-Type': 'application/json'}),
         method: 'POST',
@@ -147,14 +144,13 @@ function comentar(tagName){
         return ''
     })
     .then(response => {
-        console.log(`Response: ${response}`)
         if(response){
             response = JSON.parse(response)
             let comentarios = tagName.parentNode.previousElementSibling.lastElementChild
             comentarios.innerHTML += 
-                                `<div id=${response._id}>
-                                    <p><strong>${response.nome_usuario}</strong>: ${response.conteudo}</p>
-                                    <button class='btn btn-warning' onclick='excluirComentario(this)'>Excluir</button>
+                                `<div class="d-flex justify-content-between mb-1 border border-1" id=${response._id}>
+                                    <p class="text-break" ><strong>${response.nome_usuario}</strong>: ${response.conteudo}</p>
+                                    <button class='btn btn-warning btn-sm' onclick='excluirComentario(this)'>Excluir</button>
                                 </div>`
         }
 
@@ -173,25 +169,13 @@ function comentarios(tagComentario){
             let comentariosInseridos =comentarios.reduce(
                 (acumulador, comentario) => 
                     acumulador += 
-                        `<div class="d-flex justify-content-between mb-1" id=${comentario._id}>
-                            <p><strong>${comentario.nome_usuario}</strong>: ${comentario.conteudo}</p>
+                        `<div class="d-flex justify-content-between mb-1 border border-1" id=${comentario._id}>
+                            <p class="text-break"><strong>${comentario.nome_usuario}</strong>: ${comentario.conteudo}</p>
                             <button class='btn btn-warning btn-sm' onclick='excluirComentario(this)'>Excluir</button>
                         </div>`,
                     ''
                 )
             
-            console.log('tag atual: ')
-            console.log(tagComentario)
-
-            console.log('tag pai: ')
-            console.log(tagComentario.parentNode)
-
-            console.log('tag tia: ')
-            console.log(tagComentario.parentNode.nextElementSibling)
-
-            console.log('tag irma: ')
-            console.log(tagComentario.nextElementSibling)
-
             let tagComentar = tagComentario.parentNode.nextElementSibling
             tagComentar.className = 'input-group mb-3'
             tagComentario.innerHTML = 'Comentários mais antigos'
@@ -221,7 +205,6 @@ function votar(tagName, id){
         voto[item.dataset.referencia] = Number(item.checked)    
     }
 
-    console.log(voto)
     fetch('/votar-empresa',
         {
             headers: new Headers({'Content-Type': 'application/json'}),
@@ -244,9 +227,6 @@ function votar(tagName, id){
         avaliacaoAtualizada.innerHTML = renderizarAvaliacaoLista(response)
 
         let votacaoDiv = tagName.parentNode.parentNode.parentNode
-        console.log(votacaoDiv)
-        console.log(votacaoDiv.parentNode)
-        console.log(avaliacaoAtualizada)
         let body = votacaoDiv.parentNode
         body.replaceChild(flashMessage, votacaoDiv)
 

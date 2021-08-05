@@ -1,3 +1,4 @@
+require('dotenv').config();
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
@@ -5,17 +6,20 @@ var cookieParser = require('cookie-parser');
 const session = require('express-session')
 const RedisStore = require('connect-redis')(session)
 const redis = require('redis')
-const client = redis.createClient({host: 'redis-incluir'})
+const client = redis.createClient({
+    host: process.env.REDIS_CONNECTION || 'localhost'
+})
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://mongo-incluir:27017/test', {useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect(`mongodb://${process.env.MONGO_CONNECTION || 'localhost'}:27017/test`, {useNewUrlParser: true, useUnifiedTopology: true});
 
 
 client.on('erro', error => console.log(error))
+client.on('connect', error => console.log('Redis is running...'))
 
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
-  console.log('Connected!')
+  console.log('MongoDB is running...')
 });
 
 var indexRouter = require('./routes/index');

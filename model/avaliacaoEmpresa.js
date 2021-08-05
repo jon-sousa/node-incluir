@@ -1,5 +1,7 @@
 const redis = require('redis')
-const client = redis.createClient({host: 'redis-incluir'})
+const client = redis.createClient({
+        host: process.env.REDIS_CONNECTION || 'localhost'
+})
 const {promisify} = require('util')
 const hgetallAsync = promisify(client.hgetall).bind(client) 
 
@@ -17,20 +19,16 @@ module.exports = {
             if(err){
                 throw new Error(`Erro ao inserir votação no servidor: ${err}`);
             }
-
-            console.log(replies)
         })
     },
 
     async buscar(chave){
         try{
             let avaliacao = await hgetallAsync(chave)
-            console.log(`Redis | id: ${chave}, avaliacao: ${JSON.stringify(avaliacao)}`)
             return avaliacao
         }
         catch(e){
             console.log('Ocorreu um erro: ' + e)
         }
-        console.log('Fim do metodo')
     }
 }
